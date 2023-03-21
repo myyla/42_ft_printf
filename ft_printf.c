@@ -6,14 +6,14 @@
 /*   By: amtouham <amtouham@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/28 20:59:08 by amtouham          #+#    #+#             */
-/*   Updated: 2023/03/20 15:02:42 by amtouham         ###   ########.fr       */
+/*   Updated: 2023/03/20 21:06:39 by amtouham         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 #include <stdarg.h>
 
-int	percent_check(va_list *p, char c)
+static int	percent_write(va_list *p, char c)
 {
 	int	len;
 
@@ -42,16 +42,18 @@ int	ft_printf(const char *s, ...)
 	while (s[++i])
 	{
 		if (s[i] != '%')
+		{
 			len += write(1, &s[i], 1);
-		if (len < 0)
-			return (-1);
+			if (len < 0)
+				return (-1);
+		}
 		else if (s[i] == '%' && s[i + 1])
 		{
-			len += percent_check(&p, s[i + 1]);
+			len += percent_write(&p, s[i + 1]);
 			if (len < 0)
 				return (-1);
 			i++;
 		}
 	}
-	return (len);
+	return (va_end(p),len);
 }
